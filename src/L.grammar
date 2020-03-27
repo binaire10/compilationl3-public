@@ -1,0 +1,49 @@
+Package L;
+
+Helpers
+	cr = 13;
+	lf = 10;
+	tab = 9;
+	eol = cr lf | cr | lf;
+	digit = ['0' .. '9'];
+	lower = ['a' .. 'z'];
+	upper = ['A' .. 'Z'];
+	alpha = lower | upper;
+	letter = '_' | '$' | alpha | digit;
+	space = ' ' | tab;
+	b_ident = (alpha | '_' | '$');
+	e_ident = (alpha | digit | '_' | '$');
+	comment = '#'[[0..0xffff]-[cr + lf]]*eol;
+
+Tokens
+	number = digit+;
+	ident  = b_ident e_ident*;
+	equal = '=';
+	plus   = '+';
+	minus  = '-';
+	mult   = '*';
+	div    = '/';
+	mod    = '%';
+	l_part = '(';
+	r_part  = ')';
+	blank  = (' ' | eol | tab)+;
+	types_base = 'entier';
+	l_inst = '{';
+	r_inst = '}';
+	semicolon  = ';';
+	comma = ',';
+
+Ignored Tokens
+	blank;
+
+Productions
+	type  = {type} types_base;
+	declf = {declf} ident l_part declagrv? r_part declvi?  l_inst r_inst;
+	declvi = {declvi} declagrv semicolon;
+	declagrv = {declagrv} declagrv comma declv | {declv}declv;
+	declv = {declv} type ident;
+	op = {op} op equal expr | {expr} expr;
+	expr = {factor} factor | {plus} expr plus factor | {minus} expr minus factor;
+	factor = {term} term | {mult} factor mult term | {div} factor div term | {mod} factor mod term;
+	term = {number} number | {expr} l_part op r_part | {ident} ident | {call} ident l_part farg r_part;
+	farg = {comma} farg comma op | {expr} op;

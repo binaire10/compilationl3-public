@@ -1,12 +1,20 @@
-import sc.parser.*;
-import sc.lexer.*;
-import sc.node.*;
-import java.io.*;
-import sa.*;
-import ts.*;
-import c3a.*;
-import nasm.*;
-//import fg.*;
+import c3a.C3a;
+import c3a.C3aEval;
+import fg.Fg;
+import fg.Fg2Solution;
+import fg.FgSolution;
+import fg.Nasm2fg;
+import nasm.Nasm;
+import sa.Sa2Xml;
+import sa.SaNode;
+import sc.lexer.Lexer;
+import sc.node.Start;
+import sc.parser.Parser;
+import ts.Ts;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PushbackReader;
 
 public class Compiler
 {
@@ -65,16 +73,24 @@ public class Compiler
 	    System.out.println("[PRINT PRE NASM] ");
 	    nasm.affichePre(baseName);
 
-      /*
+
 	    System.out.print("[BUILD FG] ");
 	    Fg fg = new Fg(nasm);
+
+	    new Nasm2fg(nasm, fg);
+
 	    System.out.print("[PRINT FG] ");
 	    fg.affiche(baseName);
 
 	    System.out.println("[SOLVE FG]");
 	    FgSolution fgSolution = new FgSolution(nasm, fg);
+	    new Fg2Solution(fg, fgSolution);
 	    fgSolution.affiche(baseName);
-      */
+
+
+	    new DefineRegisterASM().convert(nasm, fgSolution);
+		System.out.println("[BUILD NASM]");
+	    nasm.affiche(baseName);
 	}
 	catch(Exception e){
 	    System.out.println(e.getMessage());
