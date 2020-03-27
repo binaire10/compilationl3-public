@@ -22,29 +22,31 @@ public class Fg2Solution {
         int count = solution.nasm.getTempCounter();
         IntSet globalDef = new IntSet(count);
         for(NasmInst inst : solution.nasm.listeInst) {
-            boolean testDest= testDef(inst.destination);
-            boolean testSrc  = testDef(inst.source);
+//            boolean testDest= testDef(inst.destination);
+//            boolean testSrc  = testDef(inst.source);
             IntSet def = new IntSet(count);
             IntSet in  = new IntSet(count);
             IntSet out = new IntSet(count);
             IntSet use = new IntSet(count);
-            if(testDest) {
-                int val = ((NasmRegister)inst.destination).val;
-                if(!globalDef.isMember(val)){
-                    def.add(val);
-                    globalDef.add(val);
+            if(inst.destination instanceof NasmRegister) {
+                NasmRegister register = (NasmRegister) inst.destination;
+                if (register.isGeneralRegister()) {
+                    int val = register.val;
+                    if (inst.destDef)
+                        def.add(val);
+                    if (inst.destUse)
+                        use.add(val);
                 }
-                else
-                    use.add(val);
             }
-            if(testSrc){
-                int val = ((NasmRegister)inst.source).val;
-                if(!globalDef.isMember(val)){
-                    def.add(val);
-                    globalDef.add(val);
+            if(inst.source instanceof NasmRegister) {
+                NasmRegister register = (NasmRegister) inst.source;
+                if (register.isGeneralRegister()) {
+                    int val = register.val;
+                    if (inst.srcDef)
+                        def.add(val);
+                    if (inst.srcUse)
+                        use.add(val);
                 }
-                else
-                    use.add(val);
             }
             solution.def.put(inst, def);
             solution.in.put(inst, in);
@@ -56,6 +58,7 @@ public class Fg2Solution {
         boolean isUpdate = true;
         while (isUpdate) {
             isUpdate = false;
+            ++solution.iterNum;
             for (Node s : nodes) {
                 NasmInst inst = fg.node2Inst.get(s);
                 IntSet def = solution.def.get(inst);

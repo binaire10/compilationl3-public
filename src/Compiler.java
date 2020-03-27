@@ -4,6 +4,7 @@ import fg.Fg;
 import fg.Fg2Solution;
 import fg.FgSolution;
 import fg.Nasm2fg;
+import ig.Ig;
 import nasm.Nasm;
 import sa.Sa2Xml;
 import sa.SaNode;
@@ -83,14 +84,14 @@ public class Compiler
 	    fg.affiche(baseName);
 
 	    System.out.println("[SOLVE FG]");
-	    FgSolution fgSolution = new FgSolution(nasm, fg);
-	    new Fg2Solution(fg, fgSolution);
-	    fgSolution.affiche(baseName);
+	    FgSolution fgs = new FgSolution(nasm, fg);
+	    new Fg2Solution(fg, fgs);
+	    fgs.affiche(baseName);
 
-
-	    new DefineRegisterASM().convert(nasm, fgSolution);
-		System.out.println("[BUILD NASM]");
-	    nasm.affiche(baseName);
+		new Ig(fgs).affiche(baseName);
+//	    new DefineRegisterASM().convert(nasm, fgs);
+//		System.out.println("[BUILD NASM]");
+//	    nasm.affiche(baseName);
 	}
 	catch(Exception e){
 	    System.out.println(e.getMessage());
