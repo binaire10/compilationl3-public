@@ -38,14 +38,18 @@ public class Ig {
     }
 
     private void build() {
-    	for (var value : fgs.in.values())
-			for (int i = 0; i < value.getSize(); i++)
-				for (int j = i + 1; j < value.getSize(); j++)
-					graph.addNOEdge(int2Node[i], int2Node[j]);
-    	for (var value : fgs.out.values())
-			for (int i = 0; i < value.getSize(); i++)
-				for (int j = i + 1; j < value.getSize(); j++)
-					graph.addNOEdge(int2Node[i], int2Node[j]);
+        for (var value : fgs.in.values())
+            for (int i = 0; i < value.getSize(); i++)
+                if (value.isMember(i))
+                    for (int j = i + 1; j < value.getSize(); j++)
+                        if (value.isMember(j))
+                            graph.addNOEdge(int2Node[i], int2Node[j]);
+        for (var value : fgs.out.values())
+            for (int i = 0; i < value.getSize(); i++)
+                if (value.isMember(i))
+                    for (int j = i + 1; j < value.getSize(); j++)
+                        if (value.isMember(j))
+                            graph.addNOEdge(int2Node[i], int2Node[j]);
         colorGraph = new ColorGraph(graph, 4, getPrecoloredTemporaries());
     }
 

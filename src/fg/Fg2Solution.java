@@ -1,8 +1,6 @@
 package fg;
 
-import nasm.Nasm;
 import nasm.NasmInst;
-import nasm.NasmOperand;
 import nasm.NasmRegister;
 import util.graph.Node;
 import util.graph.NodeList;
@@ -12,15 +10,10 @@ public class Fg2Solution {
     private Fg fg;
     private FgSolution solution;
 
-    public boolean testDef(NasmOperand operand) {
-        return operand instanceof NasmRegister && ((NasmRegister) operand).color == Nasm.REG_UNK;
-    }
-
     public Fg2Solution(Fg fg, FgSolution solution) {
         this.fg = fg;
         this.solution = solution;
         int count = solution.nasm.getTempCounter();
-        IntSet globalDef = new IntSet(count);
         for(NasmInst inst : solution.nasm.listeInst) {
 //            boolean testDest= testDef(inst.destination);
 //            boolean testSrc  = testDef(inst.source);
@@ -74,7 +67,7 @@ public class Fg2Solution {
                     out.union(solution.in.get(fg.node2Inst.get(succ.head)));
 
 
-                if(!isUpdate && (!in.equal(inP) || !out.equal(outP))) {
+                if ((!in.equal(inP) || !out.equal(outP))) {
                     solution.in.put(inst, in);
                     solution.out.put(inst, out);
                     isUpdate = true;

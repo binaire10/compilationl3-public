@@ -354,7 +354,7 @@ public class C3a2nasm implements C3aVisitor<NasmOperand> {
         if(oper.item.portee == table)
             return operandMap.computeIfAbsent(oper, o -> new NasmAddress(new NasmLabel(oper.item.identif)));
         if(oper.item.isParam)
-            return operandMap.computeIfAbsent(oper, o -> new NasmAddress(registerEBP, '+', new NasmConstant(oper.item.adresse+1)));
+            return operandMap.computeIfAbsent(oper, o -> new NasmAddress(registerEBP, '+', new NasmConstant(oper.item.adresse + 3)));
         return operandMap.computeIfAbsent(oper, o -> new NasmAddress(registerEBP, '-', new NasmConstant(oper.item.adresse+1)));
     }
 

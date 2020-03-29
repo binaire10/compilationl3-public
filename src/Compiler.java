@@ -80,18 +80,18 @@ public class Compiler
 
 	    new Nasm2fg(nasm, fg);
 
-	    System.out.print("[PRINT FG] ");
-	    fg.affiche(baseName);
+		System.out.print("[PRINT FG] ");
+		fg.affiche(baseName);
 
-	    System.out.println("[SOLVE FG]");
-	    FgSolution fgs = new FgSolution(nasm, fg);
-	    new Fg2Solution(fg, fgs);
-	    fgs.affiche(baseName);
+		System.out.println("[SOLVE FG]");
+		FgSolution fgs = new FgSolution(nasm, fg);
+		new Fg2Solution(fg, fgs);
+		fgs.affiche(baseName);
 
 		new Ig(fgs).affiche(baseName);
-//	    new DefineRegisterASM().convert(nasm, fgs);
-//		System.out.println("[BUILD NASM]");
-//	    nasm.affiche(baseName);
+
+		System.out.println("[BUILD NASM]");
+		nasm.affiche(baseName);
 	}
 	catch(Exception e){
 	    System.out.println(e.getMessage());
