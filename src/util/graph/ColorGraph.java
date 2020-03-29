@@ -131,6 +131,7 @@ public class ColorGraph {
             if(enleves.isMember(i) || nbVoisins(i) < K)
                 continue;
             pile.add(i);
+            enleves.add(i);
             deborde.add(i);
             simplification();
         }
