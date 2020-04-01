@@ -1,49 +1,91 @@
-Package L;
+Package sc;
 
 Helpers
-	cr = 13;
-	lf = 10;
-	tab = 9;
-	eol = cr lf | cr | lf;
-	digit = ['0' .. '9'];
-	lower = ['a' .. 'z'];
-	upper = ['A' .. 'Z'];
-	alpha = lower | upper;
-	letter = '_' | '$' | alpha | digit;
-	space = ' ' | tab;
-	b_ident = (alpha | '_' | '$');
-	e_ident = (alpha | digit | '_' | '$');
-	comment = '#'[[0..0xffff]-[cr + lf]]*eol;
+
+lettre = [['a' .. 'z'] + ['A' .. 'Z']];
+digit = ['0' .. '9'];
+alpha = [lettre + ['_' + '$']];
+alphanum = [alpha + digit];
 
 Tokens
-	number = digit+;
-	ident  = b_ident e_ident*;
-	equal = '=';
-	plus   = '+';
-	minus  = '-';
-	mult   = '*';
-	div    = '/';
-	mod    = '%';
-	l_part = '(';
-	r_part  = ')';
-	blank  = (' ' | eol | tab)+;
-	types_base = 'entier';
-	l_inst = '{';
-	r_inst = '}';
-	semicolon  = ';';
-	comma = ',';
+
+number = digit+;
+espaces = (' ' | 13 | 10)+;
+commentaire= '#' [[0 .. 0xffff] - [10 + 13]]* (10 | 13 | 10 13);
+integer = 'entier' ;
+comma  = ',';
+semicolon  = ';';
+l_part = '(';
+r_part  = ')';
+l_inst = '{';
+r_inst = '}';
+
+l_array = '[';
+r_array = ']';
+
+plus   = '+';
+minus  = '-';
+mult   = '*';
+div    = '/';
+mod    = '%';
+
+not    = '!';
+and    = '&';
+or    = '|';
+
+equal  = '=';
+inferior = '<';
+
+
+if = 'si';
+then = 'alors';
+else = 'sinon';
+while = 'tantque';
+do = 'faire';
+entier = 'entier';
+return = 'retour';
+read = 'lire';
+write = 'ecrire';
+ident = alpha alphanum*;
 
 Ignored Tokens
-	blank;
+
+espaces, commentaire;
 
 Productions
-	type  = {type} types_base;
-	declf = {declf} ident l_part declagrv? r_part declvi?  l_inst r_inst;
-	declvi = {declvi} declagrv semicolon;
-	declagrv = {declagrv} declagrv comma declv | {declv}declv;
-	declv = {declv} type ident;
-	op = {op} op equal expr | {expr} expr;
-	expr = {factor} factor | {plus} expr plus factor | {minus} expr minus factor;
-	factor = {term} term | {mult} factor mult term | {div} factor div term | {mod} factor mod term;
-	term = {number} number | {expr} l_part op r_part | {ident} ident | {call} ident l_part farg r_part;
-	farg = {comma} farg comma op | {expr} op;
+programme = optdecvar? listedecfonc;
+type = {integer} integer;
+dec_var = {var_simple} type ident | {array_var} type ident l_array number r_array;
+dec_arg = {dec_var} dec_var | {dec_vars} dec_var comma dec_arg;
+instr_simple = {affectation} var equal exp |
+               {write} write l_part exp r_part |
+               {procedure} call |
+               {return} return exp;
+exp = exp9;
+exp9 = {comma} exp9 comma exp8 | {exp8} exp8;
+exp8 = {or} exp8 or exp7 | {exp7} exp7;
+exp7 = {and} exp7 and exp6 | {exp6} exp6;
+exp6 = {equal} exp6 equal exp5 | {exp5} exp5;
+exp5 = {inferior} exp5 inferior exp4 | {exp4} exp4;
+exp4 = {plus} exp4 plus exp3 | {minus} exp4 minus exp3 | {exp3} exp3;
+exp3 = {mult} exp3 mult exp2 | {div} exp3 div exp2 | {mod} exp3 mod exp2 | {exp2} exp2;
+exp2 = {minus} minus exp2 | {not} not exp2 | {exp1} exp1;
+exp1 = {array_access} term l_array exp r_array | {term} term;
+term = {number} number | {expr} l_part exp r_part | {read} read l_part r_part | {call} call | {ident} ident;
+
+call = ident l_part exp? r_part;
+var = {var} ident | {array} ident l_array exp r_array;
+
+cond_struct = {if}if exp then block_instr else_structure? |
+              {while} while exp do block_instr;
+
+else_structure = {else} else block_instr;
+instr = {simple} instr_simple? semicolon | {structure} cond_struct;
+
+instr_lists = {instr} instr | {instr_block} instr instr_lists;
+block_instr = {block} l_inst instr_lists? r_inst;
+
+decfonc = ident l_part dec_arg? r_part optdecvar? block_instr;
+listedecfonc = decfonc | {listedecfoncs} decfonc listedecfonc;
+optdecvar = dec_arg semicolon;
+
